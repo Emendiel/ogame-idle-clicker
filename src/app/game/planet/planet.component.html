@@ -1,0 +1,9 @@
+<div>
+    <h2>{{ planet.name }}</h2>
+    <div *ngFor="let resource of planet.resources">
+        <app-resource [resource]="resource"></app-resource>
+    </div>
+    <div *ngFor="let building of planet.buildings">
+        <app-building [building]="building"></app-building>
+    </div>
+</div>
