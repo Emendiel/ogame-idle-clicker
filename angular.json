@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "ogame-idle-clicker:build:production"
+              "buildTarget": "ogame-idle-clicker:build:production"
             },
             "development": {
-              "browserTarget": "ogame-idle-clicker:build:development"
+              "buildTarget": "ogame-idle-clicker:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -76,7 +76,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ogame-idle-clicker:build"
+            "buildTarget": "ogame-idle-clicker:build"
           }
         },
         "test": {
