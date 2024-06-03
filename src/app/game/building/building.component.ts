@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
-import { Building } from '../game.model';
+import { Component, Input, inject } from '@angular/core';
+import { Building, Planet } from '../game.model';
+import { GameService } from '../game.service';
 
 @Component({
   selector: 'app-building',
@@ -7,6 +8,8 @@ import { Building } from '../game.model';
 })
 export class BuildingComponent {
   @Input() building!: Building;
+
+  #gameService = inject(GameService);
 
   upgradeBuilding() {
     this.building.level += 1;

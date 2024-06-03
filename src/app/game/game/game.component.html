@@ -1,4 +1,17 @@
-<div>
-    <app-home></app-home>
-    <app-planet *ngFor="let planet of planets" [planet]="planet"></app-planet>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between"> 
+        <div>
+            <h3 class="text-center">Ogame Idle Clicker</h3>
+        </div>
+        
+        <div class="d-inline-flex gap-1">
+            <button type="button" class="btn btn-success" (click)="saveGame()">Save Game</button>
+            <button type="button" class="btn btn-primary" (click)="loadGame()">load Game</button>
+        </div>
+    </div>
+    <div class="row" *ngFor="let planet of planets">
+        <div class="col-md-6">
+            <app-planet [planet]="planet"></app-planet>
+        </div>
+    </div>
 </div>

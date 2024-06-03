@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
-import { Resource } from '../game.model';
+import { Component, Input, inject } from '@angular/core';
+import { Planet, Resource } from '../game.model';
+import { GameService } from '../game.service';
 
 @Component({
   selector: 'app-resource',
@@ -8,7 +9,9 @@ import { Resource } from '../game.model';
 export class ResourceComponent {
   @Input() resource!: Resource;
 
-  collectResource() {
+  #gameService = inject(GameService);
+
+  async collectResource() {
     this.resource.amount += 1;
   }
 }

@@ -1,20 +1,24 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Planet } from './game.model';
+import { GameDbService } from './service/game-db.service.ts.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
-  private planets: Planet[] = [
-    {
-      id: 1,
-      name: 'Earth',
-      resources: [{ id: 1, type: 'Metal', amount: 100 }],
-      buildings: [{ id: 1, type: 'Mine', level: 1, productionRate: 10 }]
-    }
-  ];
+  #gameDBService = inject(GameDbService);
 
-  getPlanets() {
-    return this.planets;
+  async getUserGameState(): Promise<Planet[]> {
+    return this.#gameDBService.getPlanets();
+  }
+
+  async saveUserGameState(planets: Planet[]): Promise<void> {
+    for (const planet of planets) {
+      await this.#gameDBService.savePlanet(planet);
+    }
+  }
+
+  async deletePlanet(id: number): Promise<void> {
+    await this.#gameDBService.deletePlanet(id);
   }
 }
