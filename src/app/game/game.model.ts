@@ -16,5 +16,13 @@ export interface Building {
     id: number;
     type: string;
     level: number;
+    resourceType: string;
     productionRate: number;
+}
+
+export interface UserGameState {
+    id?: number;
+    type: string;
+    savedAt: Date;
+    planets: Planet[];
 }

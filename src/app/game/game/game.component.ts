@@ -1,18 +1,34 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { GameService } from '../game.service';
-import { Planet } from '../game.model';
+import { Planet, UserGameState } from '../game.model';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html'
 })
-export class GameComponent implements OnInit {
-  planets: Planet[] = [];
+export class GameComponent implements OnInit, OnDestroy {
+  userGameState!: UserGameState;
+  #intervalIdResourceIncrement: any;
+  #intervalIdAutoSave: any;
 
   #gameService = inject(GameService);
 
   async ngOnInit() {
     await this.loadGame();
+
+    this.startAutoSave();
+    this.startResourceIncrement();
+  }
+
+  ngOnDestroy() {
+    if (this.#intervalIdResourceIncrement) {
+      clearInterval(this.#intervalIdResourceIncrement);
+    }
+    
+    if (this.#intervalIdAutoSave) {
+      clearInterval(this.#intervalIdAutoSave);
+    }
   }
 
   initializeGame(): Planet[] {
@@ -21,7 +37,7 @@ export class GameComponent implements OnInit {
         id: 1,
         name: 'Earth',
         resources: [{ id: 1, type: 'Metal', amount: 100 }],
-        buildings: [{ id: 1, type: 'Mine', level: 1, productionRate: 1 }]
+        buildings: [{ id: 1, type: 'Mine', resourceType: 'Metal', level: 1, productionRate: 1 }]
       },
       {
         id: 2,
@@ -33,13 +49,30 @@ export class GameComponent implements OnInit {
   }
 
   async saveGame() {
-    await this.#gameService.saveUserGameState(this.planets);
+    this.userGameState = await this.#gameService.saveUserGameState(this.userGameState.planets);
   }
 
   async loadGame() {
-    this.planets = await this.#gameService.getUserGameState();
-    if (this.planets.length === 0) {
-      this.planets = this.initializeGame();
+    this.userGameState = await this.#gameService.getUserGameState();
+    
+    if (this.userGameState.planets.length === 0) {
+      this.userGameState.planets = this.initializeGame();
     }
+  }
+
+  startAutoSave() {
+    this.#intervalIdAutoSave = setInterval(async () => {
+      this.userGameState = await this.#gameService.saveUserGameState(this.userGameState.planets, true);
+    }, 2 * 1000 * 60);
+  }
+
+  startResourceIncrement() {
+    this.#intervalIdResourceIncrement = setInterval(() => {
+      this.#gameService.incrementResources(this.userGameState.planets);
+    }, 1000);
+  }
+
+  getSavedAtFormatted(): string {
+    return moment(this.userGameState.savedAt).fromNow();
   }
 }

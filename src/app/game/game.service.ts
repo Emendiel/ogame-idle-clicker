@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { Planet } from './game.model';
-import { GameDbService } from './service/game-db.service.ts.service';
+import { Planet, UserGameState } from './game.model';
+import { GameDbService } from './service/game-db.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,17 +8,64 @@ import { GameDbService } from './service/game-db.service.ts.service';
 export class GameService {
   #gameDBService = inject(GameDbService);
 
-  async getUserGameState(): Promise<Planet[]> {
-    return this.#gameDBService.getPlanets();
-  }
-
-  async saveUserGameState(planets: Planet[]): Promise<void> {
-    for (const planet of planets) {
-      await this.#gameDBService.savePlanet(planet);
+  async getUserGameState(): Promise<UserGameState> {
+    const timestamp = new Date();
+    const state = await this.#gameDBService.getUserGameState();
+    if (state) {
+      return state;
+    } else {
+      return {
+        type: 'Save',
+        savedAt: timestamp,
+        planets: []
+      };
     }
   }
 
-  async deletePlanet(id: number): Promise<void> {
-    await this.#gameDBService.deletePlanet(id);
+  async saveUserGameState(planets: Planet[], isAuto = false): Promise<UserGameState> {
+    const timestamp = new Date();
+    let gameState: UserGameState;
+
+    if (isAuto) {
+      const LastAutoSave = await this.#gameDBService.getLastAutoSave();
+
+      if (LastAutoSave) {
+        LastAutoSave.savedAt = new Date();
+        gameState = LastAutoSave;
+      } else {
+        gameState = {
+          type: 'AutoSave',
+          savedAt: timestamp,
+          planets: planets
+        }
+      }
+
+    } else {
+      gameState = {
+        type: 'Save',
+        savedAt: timestamp,
+        planets: planets
+      }
+    }
+
+    await this.#gameDBService.saveUserGameState(gameState);
+
+    return gameState;
+  }
+
+  async clearUserGameState(): Promise<void> {
+    await this.#gameDBService.clearUserGameState();
+  }
+
+  incrementResources(planets: Planet[]) {
+    planets.forEach(planet => {
+      planet.resources.forEach(resource => {
+        const building = planet.buildings
+        .filter(building => building.resourceType.toLowerCase() === resource.type.toLowerCase());
+        const productionRate = building
+          .reduce((sum, building) => sum + building.productionRate, 0);
+        resource.amount += productionRate;
+      });
+    });
   }
 }

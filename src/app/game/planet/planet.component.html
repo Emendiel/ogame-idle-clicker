@@ -1,14 +1,13 @@
 <div class="card mt-3">
     <div class="card-header">
-      <h2>{{ planet.name }}</h2>
+        <h2>{{ planet.name }}</h2>
     </div>
     <div class="card-body">
-      <div class="mb-2" *ngFor="let resource of planet.resources">
-        <app-resource [resource]="resource"></app-resource>
-      </div>
-      <div *ngFor="let building of planet.buildings">
-        <app-building [building]="building"></app-building>
-      </div>
+        <div class="mb-2" *ngFor="let resource of planet.resources">
+            <app-resource [resource]="resource"></app-resource>
+        </div>
+        <div *ngFor="let building of planet.buildings">
+            <app-building [building]="building"></app-building>
+        </div>
     </div>
-  </div>
-  
+</div>

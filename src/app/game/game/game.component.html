@@ -9,9 +9,14 @@
             <button type="button" class="btn btn-primary" (click)="loadGame()">load Game</button>
         </div>
     </div>
-    <div class="row" *ngFor="let planet of planets">
-        <div class="col-md-6">
-            <app-planet [planet]="planet"></app-planet>
+
+    @if (this.userGameState) {
+        <div class="text-end">
+            Last saved: {{ getSavedAtFormatted() }}
         </div>
-    </div>
+
+        @for (planet of this.userGameState.planets; track $index) {
+            <app-planet [planet]="planet"></app-planet>
+        }
+    }
 </div>
