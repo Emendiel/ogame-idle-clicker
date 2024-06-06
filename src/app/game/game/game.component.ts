@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { GameService } from '../game.service';
-import { Planet, UserGameState } from '../game.model';
+import { Building, Planet, ResourceType, UserGameState } from '../game.model';
 import * as moment from 'moment';
 
 @Component({
@@ -8,6 +8,7 @@ import * as moment from 'moment';
   templateUrl: './game.component.html'
 })
 export class GameComponent implements OnInit, OnDestroy {
+  buildingList!: Building[];
   userGameState!: UserGameState;
   #intervalIdResourceIncrement: any;
   #intervalIdAutoSave: any;
@@ -15,6 +16,8 @@ export class GameComponent implements OnInit, OnDestroy {
   #gameService = inject(GameService);
 
   async ngOnInit() {
+    this.initializeGame();
+
     await this.loadGame();
 
     this.startAutoSave();
@@ -31,18 +34,51 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
-  initializeGame(): Planet[] {
-    return [
+  initializeGame() {
+    this.buildingList = [
+      {
+        id: 1,
+        type: 'Quarry',
+        resourceCost: [
+          { id: 1, type: ResourceType.Stone, amount: 5 }
+        ],
+        resourceType: ResourceType.Stone,
+        level: 1,
+        productionRate: 1,
+        productionRateProgress: 0,
+        productionRateNbSeconds: 1,
+      },
+      {
+        id: 2,
+        type: 'Copper Mine',
+        resourceCost: [
+          { id: 1, type: ResourceType.Stone, amount: 5 },
+          { id: 2, type: ResourceType.Copper, amount: 8 },
+        ],
+        resourceType: ResourceType.Copper,
+        level: 1,
+        productionRate: 1,
+        productionRateProgress: 0,
+        productionRateNbSeconds: 1,
+      }
+    ];
+  }
+
+  initUserGameState() {
+    this.userGameState.planets = [
       {
         id: 1,
         name: 'Earth',
-        resources: [{ id: 1, type: 'Metal', amount: 100 }],
-        buildings: [{ id: 1, type: 'Mine', resourceType: 'Metal', level: 1, productionRate: 1 }]
+        resources: [
+          { id: 1, type: ResourceType.Stone, amount: 0 },
+          { id: 2, type: ResourceType.Copper, amount: 0 },
+        ],
+        buildings: []
       },
       {
         id: 2,
         name: 'Mars',
-        resources: [{ id: 1, type: 'Metal', amount: 10 }],
+        resources: [{ id: 1, type: ResourceType.Stone, amount: 0 }],
         buildings: []
       }
     ];
@@ -56,7 +92,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.userGameState = await this.#gameService.getUserGameState();
     
     if (this.userGameState.planets.length === 0) {
-      this.userGameState.planets = this.initializeGame();
+      this.initUserGameState();
     } else {
       this.computeUserGameState();
     }

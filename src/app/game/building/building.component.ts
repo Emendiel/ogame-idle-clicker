@@ -1,18 +1,23 @@
-import { Component, Input, inject } from '@angular/core';
-import { Building, Planet } from '../game.model';
-import { GameService } from '../game.service';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Building } from '../game.model';
 
 @Component({
   selector: 'app-building',
   templateUrl: './building.component.html'
 })
 export class BuildingComponent {
+  @Input() owned = false;
+  @Input() canBuild = false;
   @Input() building!: Building;
 
-  #gameService = inject(GameService);
+  @Output() buildBuilding: EventEmitter<Building> = new EventEmitter();
 
-  upgradeBuilding() {
+  upgrade() {
     this.building.level += 1;
     this.building.productionRate += 1;
+  }
+
+  async build() {
+    this.buildBuilding.emit(this.building);
   }
 }

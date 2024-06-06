@@ -8,7 +8,7 @@ export interface Planet {
 
 export interface Resource {
     id: number;
-    type: string;
+    type: ResourceType;
     amount: number;
 }
 
@@ -16,8 +16,11 @@ export interface Building {
     id: number;
     type: string;
     level: number;
-    resourceType: string;
+    resourceCost: Resource[];
+    resourceType: ResourceType;
     productionRate: number;
+    productionRateProgress: number;
+    productionRateNbSeconds: number;
 }
 
 export interface UserGameState {
@@ -25,4 +28,10 @@ export interface UserGameState {
     type: string;
     savedAt: Date;
     planets: Planet[];
+}
+
+export enum ResourceType {
+    Stone = 'Stone',
+    Copper = 'Copper',
+    Iron = 'Iron'
 }

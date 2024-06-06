@@ -16,7 +16,7 @@
         </div>
 
         @for (planet of this.userGameState.planets; track $index) {
-            <app-planet [planet]="planet"></app-planet>
+            <app-planet [planet]="planet" [buildingList]="buildingList"></app-planet>
         }
     }
 </div>

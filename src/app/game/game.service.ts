@@ -61,9 +61,11 @@ export class GameService {
     planets.forEach(planet => {
       planet.resources.forEach(resource => {
         const building = planet.buildings
-        .filter(building => building.resourceType.toLowerCase() === resource.type.toLowerCase());
+        .filter(building => building.resourceType === resource.type);
+
         const productionRate = building
           .reduce((sum, building) => sum + building.productionRate, 0);
+
         resource.amount += productionRate * nbSeconds;
       });
     });

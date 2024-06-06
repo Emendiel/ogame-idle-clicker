@@ -3,11 +3,23 @@
         <h2>{{ planet.name }}</h2>
     </div>
     <div class="card-body">
-        <div class="mb-2" *ngFor="let resource of planet.resources">
-            <app-resource [resource]="resource"></app-resource>
+        
+        <div class="d-flex">
+            @for (resource of planet.resources; track resource.id) {
+                <app-resource class="mx-1" [resource]="resource"></app-resource>
+            }
         </div>
-        <div *ngFor="let building of planet.buildings">
-            <app-building [building]="building"></app-building>
+
+        <div class="d-flex">
+            @for (building of planet.buildings; track building.id) {
+                <app-building class="mx-1" [building]="building" [owned]="true"></app-building>
+            }
+        </div>
+
+        <div class="d-flex">
+            @for (building of buildingList; track building.id) {
+                <app-building class="mx-1" [canBuild]="canBuild(building)" [building]="building" (buildBuilding)="addBuilding($event)"></app-building>
+            }
         </div>
     </div>
 </div>
