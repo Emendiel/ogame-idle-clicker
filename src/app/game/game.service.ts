@@ -57,14 +57,14 @@ export class GameService {
     await this.#gameDBService.clearUserGameState();
   }
 
-  incrementResources(planets: Planet[]) {
+  incrementResources(planets: Planet[], nbSeconds = 1) {
     planets.forEach(planet => {
       planet.resources.forEach(resource => {
         const building = planet.buildings
         .filter(building => building.resourceType.toLowerCase() === resource.type.toLowerCase());
         const productionRate = building
           .reduce((sum, building) => sum + building.productionRate, 0);
-        resource.amount += productionRate;
+        resource.amount += productionRate * nbSeconds;
       });
     });
   }

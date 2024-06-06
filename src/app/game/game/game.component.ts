@@ -57,13 +57,23 @@ export class GameComponent implements OnInit, OnDestroy {
     
     if (this.userGameState.planets.length === 0) {
       this.userGameState.planets = this.initializeGame();
+    } else {
+      this.computeUserGameState();
     }
+  }
+
+  computeUserGameState() {
+    const now = moment();
+    const savedAt = moment(this.userGameState.savedAt);
+    const diff = now.diff(savedAt, 'seconds');
+
+    this.#gameService.incrementResources(this.userGameState.planets, diff);
   }
 
   startAutoSave() {
     this.#intervalIdAutoSave = setInterval(async () => {
       this.userGameState = await this.#gameService.saveUserGameState(this.userGameState.planets, true);
-    }, 2 * 1000 * 60);
+    }, 5 * 1000 * 60);
   }
 
   startResourceIncrement() {
