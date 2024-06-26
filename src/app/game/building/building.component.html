@@ -6,7 +6,7 @@
     </div>
 } @else {
     <div class="d-flex flex-column justify-content-between align-items-center">
-        <p>{{ building.type }}</p>
+        <p>{{ building.type }} - {{ building | highestTier }}</p>
         <p>{{ building.resourceType }}</p>
         <ul>
             <li *ngFor="let resource of building.resourceCost">

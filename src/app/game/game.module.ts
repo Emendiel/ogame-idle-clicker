@@ -5,20 +5,22 @@ import { GameComponent } from './game/game.component';
 import { PlanetComponent } from './planet/planet.component';
 import { BuildingComponent } from './building/building.component';
 import { ResourceComponent } from './resource/resource.component';
+import { HighestTierPipe } from "../shared/highest-tier.pipe";
 
 @NgModule({
-  declarations: [
-    HomeComponent,
-    GameComponent,
-    PlanetComponent,
-    ResourceComponent,
-    BuildingComponent
-  ],
-  imports: [
-    CommonModule
-  ],
-  exports: [
-    GameComponent
-  ]
+    declarations: [
+        HomeComponent,
+        GameComponent,
+        PlanetComponent,
+        ResourceComponent,
+        BuildingComponent
+    ],
+    exports: [
+        GameComponent
+    ],
+    imports: [
+        CommonModule,
+        HighestTierPipe
+    ]
 })
 export class GameModule { }

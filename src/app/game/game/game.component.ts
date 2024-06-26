@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { GameService } from '../game.service';
-import { Building, Planet, ResourceType, UserGameState } from '../game.model';
+import { Building, Planet, Resource, ResourceTier, ResourceTierMapping, ResourceType, UserGameState } from '../game.model';
 import * as moment from 'moment';
 
 @Component({
@@ -16,6 +16,8 @@ export class GameComponent implements OnInit, OnDestroy {
   #gameService = inject(GameService);
 
   async ngOnInit() {
+    this.#gameService.initGameService();
+    
     this.initializeGame();
 
     await this.loadGame();
@@ -40,7 +42,7 @@ export class GameComponent implements OnInit, OnDestroy {
         id: 1,
         type: 'Quarry',
         resourceCost: [
-          { id: 1, type: ResourceType.Stone, amount: 5 }
+          this.#gameService.findResourceByType(ResourceType.Stone, 10),
         ],
         resourceType: ResourceType.Stone,
         level: 1,
@@ -52,8 +54,8 @@ export class GameComponent implements OnInit, OnDestroy {
         id: 2,
         type: 'Copper Mine',
         resourceCost: [
-          { id: 1, type: ResourceType.Stone, amount: 5 },
-          { id: 2, type: ResourceType.Copper, amount: 8 },
+          this.#gameService.findResourceByType(ResourceType.Stone, 50),
+          this.#gameService.findResourceByType(ResourceType.Copper, 10),
         ],
         resourceType: ResourceType.Copper,
         level: 1,
@@ -70,15 +72,15 @@ export class GameComponent implements OnInit, OnDestroy {
         id: 1,
         name: 'Earth',
         resources: [
-          { id: 1, type: ResourceType.Stone, amount: 0 },
-          { id: 2, type: ResourceType.Copper, amount: 0 },
+          this.#gameService.findResourceByType(ResourceType.Stone),
+          this.#gameService.findResourceByType(ResourceType.Copper),
         ],
         buildings: []
       },
       {
         id: 2,
         name: 'Mars',
-        resources: [{ id: 1, type: ResourceType.Stone, amount: 0 }],
+        resources: [this.#gameService.findResourceByType(ResourceType.Stone)],
         buildings: []
       }
     ];

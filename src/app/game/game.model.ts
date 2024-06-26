@@ -9,6 +9,7 @@ export interface Planet {
 export interface Resource {
     id: number;
     type: ResourceType;
+    tier: ResourceTier;
     amount: number;
 }
 
@@ -34,4 +35,18 @@ export enum ResourceType {
     Stone = 'Stone',
     Copper = 'Copper',
     Iron = 'Iron'
+}
+
+export enum ResourceTier {
+    Tier1 = 'Tier1',
+    Tier2 = 'Tier2',
+    Tier3 = 'Tier3',
+}
+
+export const ResourceTierMapping: {
+    [key in ResourceType]: ResourceTier
+} = {
+    [ResourceType.Stone]: ResourceTier.Tier1,
+    [ResourceType.Copper]: ResourceTier.Tier2,
+    [ResourceType.Iron]: ResourceTier.Tier3,
 }

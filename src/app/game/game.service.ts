@@ -1,12 +1,22 @@
-import { Injectable, inject } from '@angular/core';
-import { Planet, UserGameState } from './game.model';
+import { Injectable, OnInit, inject } from '@angular/core';
+import { Planet, Resource, ResourceTierMapping, ResourceType, UserGameState } from './game.model';
 import { GameDbService } from './service/game-db.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
+  #resourceList!: Resource[];
   #gameDBService = inject(GameDbService);
+
+  initGameService(): void {
+    this.#resourceList = Object.values(ResourceType).map((type, index) => ({
+      id: index + 1,
+      type: type as ResourceType,
+      amount: 0,
+      tier: ResourceTierMapping[type as ResourceType]
+    }));
+  }
 
   async getUserGameState(): Promise<UserGameState> {
     const timestamp = new Date();
@@ -69,5 +79,18 @@ export class GameService {
         resource.amount += productionRate * nbSeconds;
       });
     });
+  }
+
+  findResourceByType(resourceType: ResourceType, amount = 0): Resource {
+    const resource = this.#resourceList.find((resource) => {
+      return resource.type === resourceType
+    });
+
+    if (!resource) {
+      throw new Error('Resource of type ${resourceType} not found');
+    }
+    resource.amount = amount;
+      
+    return resource;
   }
 }
