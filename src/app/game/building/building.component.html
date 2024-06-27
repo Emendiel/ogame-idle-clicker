@@ -2,9 +2,14 @@
     <div class="d-flex flex-column justify-content-between align-items-center">
         <p>{{ building.type }} - Level {{ building.level }}</p>
         <p>Produces {{ building.productionRate }} pieces of {{ building.resourceProduction }} every {{ building.productionRateNbSeconds }} seconds</p>
-        
-        <div class="d-flex bg-black justify-content-start w-100" style="height: 10px;">
-            <div class="d-flex bg-success h-100" style="width: {{ displayPercent(building) }}%"></div>
+
+        <div class="w-100">
+            <ngb-progressbar class="mb-3" type="success"
+                [value]="displayPercent(building)"
+                [animated]="true"
+                [striped]="true"
+                height="5px"
+            ></ngb-progressbar>
         </div>
         
         <button class="btn btn-info" (click)="upgrade()">Upgrade</button>

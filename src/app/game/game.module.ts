@@ -9,6 +9,8 @@ import { HighestTierPipe } from "../shared/highest-tier.pipe";
 import { MomentDateFromNowPipe } from "../shared/moment-date-from-now.pipe";
 import { BuildingProductionPercentPipe } from "../shared/building-production-percent.pipe";
 
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 @NgModule({
     declarations: [
         HomeComponent,
@@ -21,6 +23,7 @@ import { BuildingProductionPercentPipe } from "../shared/building-production-per
         GameComponent
     ],
     imports: [
+        NgbModule,
         CommonModule,
         HighestTierPipe,
         MomentDateFromNowPipe,
