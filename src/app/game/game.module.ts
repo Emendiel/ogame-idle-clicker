@@ -6,6 +6,8 @@ import { PlanetComponent } from './planet/planet.component';
 import { BuildingComponent } from './building/building.component';
 import { ResourceComponent } from './resource/resource.component';
 import { HighestTierPipe } from "../shared/highest-tier.pipe";
+import { MomentDateFromNowPipe } from "../shared/moment-date-from-now.pipe";
+import { BuildingProductionPercentPipe } from "../shared/building-production-percent.pipe";
 
 @NgModule({
     declarations: [
@@ -20,7 +22,9 @@ import { HighestTierPipe } from "../shared/highest-tier.pipe";
     ],
     imports: [
         CommonModule,
-        HighestTierPipe
+        HighestTierPipe,
+        MomentDateFromNowPipe,
+        BuildingProductionPercentPipe
     ]
 })
 export class GameModule { }

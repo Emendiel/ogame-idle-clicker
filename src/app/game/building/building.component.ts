@@ -20,4 +20,8 @@ export class BuildingComponent {
   async build() {
     this.buildBuilding.emit(this.building);
   }
+
+  displayPercent(building: Building): number {
+    return building.productionRateProgress * 100 / building.productionRateNbSeconds;
+  }
 }

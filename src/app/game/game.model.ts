@@ -18,7 +18,7 @@ export interface Building {
     type: string;
     level: number;
     resourceCost: Resource[];
-    resourceType: ResourceType;
+    resourceProduction: ResourceType;
     productionRate: number;
     productionRateProgress: number;
     productionRateNbSeconds: number;
@@ -31,6 +31,11 @@ export interface UserGameState {
     planets: Planet[];
 }
 
+export enum BuildingType {
+    Quarry = 'Quarry',
+    Mine = 'Mine',
+}
+
 export enum ResourceType {
     Stone = 'Stone',
     Copper = 'Copper',
@@ -41,6 +46,13 @@ export enum ResourceTier {
     Tier1 = 'Tier1',
     Tier2 = 'Tier2',
     Tier3 = 'Tier3',
+}
+
+export const BuildingTypeResourceMapping: {
+    [key in BuildingType]: ResourceType
+} = {
+    [BuildingType.Quarry]: ResourceType.Stone,
+    [BuildingType.Mine]: ResourceType.Copper,
 }
 
 export const ResourceTierMapping: {

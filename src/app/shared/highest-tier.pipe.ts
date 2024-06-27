@@ -1,22 +1,16 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { Building, ResourceTier, ResourceTierMapping } from '../game/game.model';
+import { Pipe, PipeTransform, inject } from '@angular/core';
+import { Building, ResourceTier } from '../game/game.model';
+import { GameService } from '../game/game.service';
 
 @Pipe({
   name: 'highestTier',
   standalone: true
 })
 export class HighestTierPipe implements PipeTransform {
+  #gameService = inject(GameService);
 
   transform(building: Building): ResourceTier {
-    const tiers = building.resourceCost.map(req => ResourceTierMapping[req.type]);
-
-    return tiers.reduce((highestTier, currentTier) => {
-      if (ResourceTier[highestTier] > ResourceTier[currentTier]) {
-        return highestTier;
-      }
-
-      return currentTier;
-    }, ResourceTier.Tier1);
+    return this.#gameService.getHihestTier(building.resourceCost);
   }
 
 }

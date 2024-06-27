@@ -16,10 +16,8 @@ export class GameComponent implements OnInit, OnDestroy {
   #gameService = inject(GameService);
 
   async ngOnInit() {
-    this.#gameService.initGameService();
-    
-    this.initializeGame();
-
+    await this.#gameService.initGameService();
+    this.buildingList = this.#gameService.getBuildingList();
     await this.loadGame();
 
     this.startAutoSave();
@@ -34,36 +32,6 @@ export class GameComponent implements OnInit, OnDestroy {
     if (this.#intervalIdAutoSave) {
       clearInterval(this.#intervalIdAutoSave);
     }
-  }
-
-  initializeGame() {
-    this.buildingList = [
-      {
-        id: 1,
-        type: 'Quarry',
-        resourceCost: [
-          this.#gameService.findResourceByType(ResourceType.Stone, 10),
-        ],
-        resourceType: ResourceType.Stone,
-        level: 1,
-        productionRate: 1,
-        productionRateProgress: 0,
-        productionRateNbSeconds: 1,
-      },
-      {
-        id: 2,
-        type: 'Copper Mine',
-        resourceCost: [
-          this.#gameService.findResourceByType(ResourceType.Stone, 50),
-          this.#gameService.findResourceByType(ResourceType.Copper, 10),
-        ],
-        resourceType: ResourceType.Copper,
-        level: 1,
-        productionRate: 1,
-        productionRateProgress: 0,
-        productionRateNbSeconds: 1,
-      }
-    ];
   }
 
   initUserGameState() {
@@ -101,9 +69,8 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   computeUserGameState() {
-    const now = moment();
     const savedAt = moment(this.userGameState.savedAt);
-    const diff = now.diff(savedAt, 'seconds');
+    const diff = moment().diff(savedAt, 'seconds');
 
     this.#gameService.incrementResources(this.userGameState.planets, diff);
   }
@@ -118,9 +85,5 @@ export class GameComponent implements OnInit, OnDestroy {
     this.#intervalIdResourceIncrement = setInterval(() => {
       this.#gameService.incrementResources(this.userGameState.planets);
     }, 1000);
-  }
-
-  getSavedAtFormatted(): string {
-    return moment(this.userGameState.savedAt).fromNow();
   }
 }

@@ -1,5 +1,5 @@
-import { Injectable, OnInit, inject } from '@angular/core';
-import { Planet, Resource, ResourceTierMapping, ResourceType, UserGameState } from './game.model';
+import { Injectable, inject } from '@angular/core';
+import { Building, BuildingType, BuildingTypeResourceMapping, Planet, Resource, ResourceTier, ResourceTierMapping, ResourceType, UserGameState } from './game.model';
 import { GameDbService } from './service/game-db.service';
 
 @Injectable({
@@ -7,15 +7,32 @@ import { GameDbService } from './service/game-db.service';
 })
 export class GameService {
   #resourceList!: Resource[];
+  #buildingList!: Building[];
   #gameDBService = inject(GameDbService);
 
-  initGameService(): void {
+  async initGameService(): Promise<void> {
     this.#resourceList = Object.values(ResourceType).map((type, index) => ({
       id: index + 1,
       type: type as ResourceType,
       amount: 0,
       tier: ResourceTierMapping[type as ResourceType]
     }));
+
+    this.#buildingList = Object.values(BuildingType).map((type, index) => ({
+      id: index + 1,
+      type: type as BuildingType,
+      resourceCost: [],
+      resourceProduction: BuildingTypeResourceMapping[type as BuildingType],
+      level: 1,
+      productionRate: 1,
+      productionRateProgress: 0,
+      productionRateNbSeconds: 10,
+    }));
+
+  }
+
+  getBuildingList(): Building[] {
+    return this.#buildingList;
   }
 
   async getUserGameState(): Promise<UserGameState> {
@@ -70,15 +87,43 @@ export class GameService {
   incrementResources(planets: Planet[], nbSeconds = 1) {
     planets.forEach(planet => {
       planet.resources.forEach(resource => {
-        const building = planet.buildings
-        .filter(building => building.resourceType === resource.type);
+        const amountResource: number[] = [];
 
-        const productionRate = building
+        const buildings = planet.buildings
+        .filter(building => building.resourceProduction === resource.type);
+
+        buildings.forEach((building) => {
+          if (building.productionRateProgress < building.productionRateNbSeconds) {
+            building.productionRateProgress = building.productionRateProgress + building.productionRate
+          } else {
+            building.productionRateProgress = 0;
+
+            amountResource.push(building.productionRate);
+          }
+        });
+
+        if (amountResource.length > 0) {
+          resource.amount += amountResource.reduce(amount => amount);
+        }
+
+        /* const productionRate = buildings
           .reduce((sum, building) => sum + building.productionRate, 0);
 
-        resource.amount += productionRate * nbSeconds;
+        resource.amount += productionRate * nbSeconds; */
       });
     });
+  }
+
+  findBuilding(type: string): Building {
+    const building = this.#buildingList.find((building) => {
+      return building.type === type
+    });
+
+    if (!building) {
+      throw new Error('Building of type ' + type + ' not found')
+    }
+
+    return Object.assign({}, building);
   }
 
   findResourceByType(resourceType: ResourceType, amount = 0): Resource {
@@ -87,10 +132,23 @@ export class GameService {
     });
 
     if (!resource) {
-      throw new Error('Resource of type ${resourceType} not found');
+      throw new Error('Resource of type ' + resourceType + ' not found');
     }
-    resource.amount = amount;
+    const planetResource = Object.assign({}, resource);
+    planetResource.amount = amount;
       
-    return resource;
+    return planetResource;
+  }
+
+  getHihestTier(resourceList: Resource[]): ResourceTier {
+    const tiers = resourceList.map(req => ResourceTierMapping[req.type]);
+
+    return tiers.reduce((highestTier, currentTier) => {
+      if (ResourceTier[highestTier] > ResourceTier[currentTier]) {
+        return highestTier;
+      }
+
+      return currentTier;
+    }, ResourceTier.Tier1);
   }
 }

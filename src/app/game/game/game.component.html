@@ -12,7 +12,7 @@
 
     @if (this.userGameState) {
         <div class="text-end">
-            Last saved: {{ getSavedAtFormatted() }}
+            Last saved: {{ userGameState.savedAt | momentDateFromNow }}
         </div>
 
         @for (planet of this.userGameState.planets; track $index) {
